@@ -7,12 +7,12 @@ class Day01 : Day() {
 
     private val comparator = compareByDescending<Calories> { it.value }
 
-    fun test1(file: String = ""): Calories {
+    fun test1(file: String = "input"): Calories {
         val calories = groupsOfCalories(file, 1)
         return calories.sum()
     }
 
-    fun test2(file: String = ""): Calories {
+    fun test2(file: String = "input"): Calories {
         val calories = groupsOfCalories(file, 3)
         return calories.sum()
     }
