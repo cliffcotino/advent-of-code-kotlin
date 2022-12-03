@@ -1,16 +1,9 @@
 class Day03 : Day() {
 
     data class Rucksack(val first: String, val second: String) {
-        fun priority(): Int {
-            val intersect = first.toSet().intersect(second.toSet())
-            check(intersect.size == 1)
 
-            val overlap = intersect.first()
-            return priorityOf(overlap)
-        }
-
-        fun all(): Set<Char> =
-            (first + second).toSet()
+        val all: String
+            get() = first + second
     }
 
     companion object {
@@ -24,11 +17,12 @@ class Day03 : Day() {
     fun test1(file: String): Int =
         readLines(file)
             .map { it.toRucksack() }
-            .sumOf { it.priority() }
+            .map { listOf(it.first, it.second).overlap() }
+            .sumOf { priorityOf(it) }
 
     private fun String.toRucksack(): Rucksack {
-        val first = this.substring(0, length / 2)
-        val second = this.substring(length / 2)
+        val first = substring(0, length / 2)
+        val second = substring(length / 2)
         return Rucksack(first, second)
     }
 
@@ -36,10 +30,12 @@ class Day03 : Day() {
         readLines(file)
             .map { it.toRucksack() }
             .chunked(3)
-            .sumOf { list -> priorityOf(intersect(list)) }
+            .map { group -> group.map { it.all }.overlap() }
+            .sumOf { priorityOf(it) }
 
-    private fun intersect(list: List<Rucksack>): Char {
-        val overlap = list[0].all().intersect(list[1].all()).intersect(list[2].all())
+    private fun List<String>.overlap(): Char {
+        val overlap = map { it.toSet() }
+            .fold(setOf<Char>()) { acc, rucksack -> if (acc.isEmpty()) rucksack else acc.intersect(rucksack) }
         check(overlap.size == 1)
         return overlap.first()
     }
