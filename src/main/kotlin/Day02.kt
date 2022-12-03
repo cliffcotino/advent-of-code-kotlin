@@ -32,8 +32,8 @@ class Day02 : Day() {
 
     enum class Outcome(val score: Int) {
         Win(6),
-        Loss(0),
-        Draw(3);
+        Draw(3),
+        Loss(0);
 
         companion object {
             fun from(value: String): Outcome =
@@ -64,12 +64,10 @@ class Day02 : Day() {
             .map {
                 val them = Hand.from(it[0])
                 val me = Hand.from(it[1])
-                Play(them = them, me = me)
+                Play(them, me)
             }
-            .sum()
+            .sumOf { it.score() }
 
-    private fun List<Play>.sum() =
-        fold(0) { acc, play -> acc + play.score() }
 
     fun test2(file: String): Int =
         readLines(file)
@@ -81,8 +79,8 @@ class Day02 : Day() {
                     Loss -> them.winsFrom()
                     Draw -> them
                 }
-                Play(them = them, me = me)
+                Play(them, me)
             }
-            .sum()
+            .sumOf { it.score() }
 
 }
