@@ -1,3 +1,4 @@
+
 class Day01 : Day() {
 
     fun test1(file: String = "input"): Int {

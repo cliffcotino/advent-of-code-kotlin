@@ -1,3 +1,4 @@
+
 class Day03 : Day() {
 
     data class Rucksack(val first: String, val second: String) {

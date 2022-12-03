@@ -1,32 +1,34 @@
 
+import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class Day01Test {
+@Disabled
+class Day04Test {
 
-    private val day = Day01()
+    private val day = Day04()
 
     @Test
     fun `test1 sample`() {
         val actual = day.test1("sample")
-        assertEquals(24000, actual)
+        assertEquals(-1, actual)
     }
 
     @Test
     fun `test2 sample`() {
         val actual = day.test2("sample")
-        assertEquals(45000, actual)
+        assertEquals(-1, actual)
     }
 
     @Test
     fun `test1 actual`() {
-        val actual = day.test1()
-        assertEquals(69626, actual)
+        val actual = day.test1("input")
+        assertEquals(-1, actual)
     }
 
     @Test
     fun `test2 actual`() {
-        val actual = day.test2()
-        assertEquals(206780, actual)
+        val actual = day.test2("input")
+        assertEquals(-1, actual)
     }
 }
