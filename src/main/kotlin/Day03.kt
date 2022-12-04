@@ -3,7 +3,7 @@ class Day03 : Day() {
 
     data class Rucksack(val first: String, val second: String) {
 
-        val all: String
+        val both: String
             get() = first + second
     }
 
@@ -31,7 +31,7 @@ class Day03 : Day() {
         readLines(file)
             .map { it.toRucksack() }
             .chunked(3)
-            .map { group -> group.map { it.all }.overlap() }
+            .map { group -> group.map { it.both }.overlap() }
             .sumOf { priorityOf(it) }
 
     private fun List<String>.overlap(): Char {

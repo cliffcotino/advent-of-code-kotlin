@@ -4,19 +4,15 @@ class Day02 : Day() {
 
     enum class Hand(val score: Int) {
         Rock(1) {
-            override fun winsFrom(): Hand = Scissor
             override fun losesTo(): Hand = Paper
         },
         Paper(2) {
-            override fun winsFrom(): Hand = Rock
             override fun losesTo(): Hand = Scissor
         },
         Scissor(3) {
-            override fun winsFrom(): Hand = Paper
             override fun losesTo(): Hand = Rock
         };
 
-        abstract fun winsFrom(): Hand
         abstract fun losesTo(): Hand
 
         companion object {
@@ -76,7 +72,7 @@ class Day02 : Day() {
                 val them = Hand.from(it[0])
                 val me = when (Outcome.from(it[1])) {
                     Win -> them.losesTo()
-                    Loss -> them.winsFrom()
+                    Loss -> them.losesTo().losesTo()
                     Draw -> them
                 }
                 Play(them, me)

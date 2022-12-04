@@ -12,15 +12,15 @@ class Day01 : Day() {
     }
 
     private fun groupsOfCalories(file: String, take: Int): List<Int> {
-        data class Acc(val sum: Int = 0, val list: List<Int> = listOf())
+        data class Accumulator(val sum: Int = 0, val list: List<Int> = listOf())
 
         val (sum, list) = readLines(file)
-            .fold(Acc()) { acc, line ->
+            .fold(Accumulator()) { acc, line ->
                 if (line.isNotEmpty()) {
                     val current = line.toInt()
-                    Acc(sum = acc.sum + current, list = acc.list)
+                    Accumulator(sum = acc.sum + current, list = acc.list)
                 } else {
-                    Acc(sum = 0, list = acc.list + acc.sum)
+                    Accumulator(sum = 0, list = acc.list + acc.sum)
                 }
             }
         // we need to also consider the lastly encountered group
