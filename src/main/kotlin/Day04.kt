@@ -1,3 +1,5 @@
+import java.lang.Integer.max
+import java.lang.Integer.min
 
 class Day04 : Day() {
 
@@ -6,9 +8,7 @@ class Day04 : Day() {
             start <= other.start && end >= other.end
 
         fun overlap(other: Section): Int {
-            val set1 = (start..end).toHashSet()
-            val set2 = (other.start..other.end).toHashSet()
-            return set1.intersect(set2).size
+            return max(0, min(end, other.end) - max(start, other.start) + 1)
         }
 
         companion object {
