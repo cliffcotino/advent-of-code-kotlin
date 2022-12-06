@@ -11,24 +11,24 @@ class Day05Test {
     @Test
     fun `test1 sample`() {
         val actual = day.test1("sample")
-        assertEquals(-1, actual)
+        assertEquals("CMZ", actual)
     }
 
     @Test
     fun `test2 sample`() {
         val actual = day.test2("sample")
-        assertEquals(-1, actual)
+        assertEquals("MCD", actual)
     }
 
     @Test
     fun `test1 actual`() {
         val actual = day.test1("input")
-        assertEquals(-1, actual)
+        assertEquals("WCZTHTMPS", actual)
     }
 
     @Test
     fun `test2 actual`() {
         val actual = day.test2("input")
-        assertEquals(-1, actual)
+        assertEquals("-1", actual)
     }
 }
