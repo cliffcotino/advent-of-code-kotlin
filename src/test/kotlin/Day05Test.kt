@@ -29,6 +29,6 @@ class Day05Test {
     @Test
     fun `test2 actual`() {
         val actual = day.test2("input")
-        assertEquals("-1", actual)
+        assertEquals("BLSGJSDTS", actual)
     }
 }

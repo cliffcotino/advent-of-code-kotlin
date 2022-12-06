@@ -38,16 +38,16 @@ class Day05 : Day() {
         val stacks = Stacks()
         while (iterator.hasNext()) {
             val line = iterator.next()
-            if (line.replace(" ", "").toIntOrNull() != null) {
+            if (!line.contains("[")) {
+                // ignore the line with only the stack numbers
                 break
             }
 
             line.chunked(4).forEachIndexed { idx, part ->
                 if (part.isNotBlank()) {
                     val crate = part.substring(part.indexOf('[') + 1, part.indexOf(']'))
-                    val chars = crate.toCharArray()
-                    check(chars.size == 1)
-                    stacks.addToStack(chars[0], idx)
+                    check(crate.length == 1)
+                    stacks.addToStack(crate[0], idx)
                 }
             }
         }
@@ -55,12 +55,12 @@ class Day05 : Day() {
     }
 
     private fun parseMoves(iterator: Iterator<String>): List<Move> {
+        val regex = Regex("""move (\d+) from (\d+) to (\d+)""")
         val moves = mutableListOf<Move>()
         while (iterator.hasNext()) {
             val line = iterator.next()
-            if (line.isNotBlank()) {
-                val regex = Regex("""move (\d+) from (\d+) to (\d+)""")
-                val (amount, from, to) = regex.find(line)!!.destructured
+            regex.find(line)?.let {
+                val (amount, from, to) = it.destructured
                 moves.add(Move(amount.toInt(), from.toInt(), to.toInt()))
             }
         }
@@ -78,7 +78,7 @@ class Day05 : Day() {
 
     private fun Array<Stack>.getTops(): String =
         mapNotNull { it.top() }
-            .joinToString("") { it.toString() }
+            .joinToString("", transform = Char::toString)
 
     fun test2(file: String): String {
         val iter = readLines(file).iterator()
