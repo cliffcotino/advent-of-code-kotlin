@@ -7,7 +7,7 @@ class Day05 : Day() {
             if (crates.isEmpty()) null else crates.last
     }
 
-    class Stacks(val stacks: Array<Stack> = Array(10) { Stack() }) {
+    class Stacks(private val stacks: Array<Stack> = Array(10) { Stack() }) {
         fun moveOneByOne(move: Move) {
             val source = stacks[move.from - 1]
             val target = stacks[move.to - 1]
@@ -30,6 +30,10 @@ class Day05 : Day() {
         fun addToStack(char: Char, stack: Int) {
             stacks[stack].crates.push(char)
         }
+
+        fun topOfStacks(): String =
+            stacks.mapNotNull { it.top() }
+                .joinToString("", transform = Char::toString)
     }
 
     data class Move(val amount: Int, val from: Int, val to: Int)
@@ -43,6 +47,7 @@ class Day05 : Day() {
                 break
             }
 
+            // 4 is the length of a string like: "[A] "
             line.chunked(4).forEachIndexed { idx, part ->
                 if (part.isNotBlank()) {
                     val crate = part.substring(part.indexOf('[') + 1, part.indexOf(']'))
@@ -73,12 +78,9 @@ class Day05 : Day() {
         parseMoves(iter).forEach { move ->
             stacks.moveOneByOne(move)
         }
-        return stacks.stacks.getTops()
+        return stacks.topOfStacks()
     }
 
-    private fun Array<Stack>.getTops(): String =
-        mapNotNull { it.top() }
-            .joinToString("", transform = Char::toString)
 
     fun test2(file: String): String {
         val iter = readLines(file).iterator()
@@ -86,7 +88,7 @@ class Day05 : Day() {
         parseMoves(iter).forEach { move ->
             stacks.moveMultiple(move)
         }
-        return stacks.stacks.getTops()
+        return stacks.topOfStacks()
     }
 
 }
