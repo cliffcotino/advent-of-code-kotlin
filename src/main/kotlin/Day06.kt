@@ -14,17 +14,13 @@ class Day06 : Day() {
         findStartOf(value, 14)
 
     private fun findStartOf(value: String, uniqueLength: Int): Int {
-        var start = uniqueLength - 1
-        while (start < value.length) {
-            val until = start + 1
-            val word = value.substring(start - (uniqueLength - 1), until)
-            if (word.toSet().size == uniqueLength) {
-                // all unique characters
-                return until
-            }
-            start++
-        }
-        throw IllegalArgumentException("Could not find marker")
+        return value.windowed(uniqueLength)
+            .mapIndexedNotNull { i, part ->
+                if (part.toSet().size == uniqueLength) {
+                    // all unique characters
+                    i + uniqueLength
+                } else null
+            }.first()
     }
 
     fun test2(file: String): Int {
