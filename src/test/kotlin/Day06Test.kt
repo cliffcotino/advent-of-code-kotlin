@@ -1,9 +1,7 @@
 
-import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Disabled
 class Day06Test {
 
     private val day = Day06()

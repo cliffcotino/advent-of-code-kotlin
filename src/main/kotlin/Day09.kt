@@ -12,6 +12,48 @@ class Day09 : Day() {
         override fun toString(): String {
             return "(x=$x, y=$y)"
         }
+
+        fun moveInDirection(direction: Direction) =
+            when (direction) {
+                Direction.L -> Point(x - 1, y)
+                Direction.R -> Point(x + 1, y)
+                Direction.U -> Point(x, y + 1)
+                Direction.D -> Point(x, y - 1)
+            }
+
+        fun moveAdjacentTo(other: Point): Point {
+            data class PointDistance(val point: Point, val distance: Int)
+
+            //println("Current position $this - relative to $other d=${distanceTo(other)}")
+
+            val neighbours = neighbours()
+            val theirNeighbours = other.neighbours()
+
+            return if (theirNeighbours.contains(this)) {
+                //println("Touching: $other")
+                this
+            } else {
+                val reachable = neighbours.intersect(theirNeighbours)
+                val reachableByDistance = reachable
+                    .map { PointDistance(it, distanceTo(it)) }
+                    .filter { other.distanceTo(it.point) == 1 }
+                    .sortedBy(PointDistance::distance)
+
+                val movingTo = reachableByDistance.first()
+                //println("Moving to: ${movingTo.point} d=${movingTo.distance}")
+                movingTo.point
+            }
+        }
+
+        private fun distanceTo(it: Point) = abs(it.x - x) + abs(it.y - y)
+
+        private fun neighbours() =
+            (-1..1)
+                .flatMap { deltaX ->
+                    (-1..1)
+                        .map { deltaY -> Point(x + deltaX, y + deltaY) }
+                }
+                .toSet()
     }
 
     private fun String.toMove(): Move =
@@ -23,64 +65,39 @@ class Day09 : Day() {
             else -> throw IllegalArgumentException("Unexpected move $this")
         }
 
-    private fun Point.moveInDirection(direction: Direction) =
-        when (direction) {
-            Direction.L -> Point(x - 1, y)
-            Direction.R -> Point(x + 1, y)
-            Direction.U -> Point(x, y + 1)
-            Direction.D -> Point(x, y - 1)
+    private class Rope(size: Int) {
+
+        val knots = (0 until size).map { Point(x = 0, y = 0) }.toMutableList()
+        fun moveHead(move: Move) {
+            knots[0] = knots[0].moveInDirection(move.direction)
         }
 
-    private fun Point.moveAdjacentTo(other: Point): Point {
-        data class PointDistance(val point: Point, val distance: Int)
-
-        // println("Current position $this - relative to $other d=${distanceTo(other)}")
-
-        val neighbours = neighbours()
-        val theirNeighbours = other.neighbours()
-
-        return if (theirNeighbours.contains(this)) {
-            // println("Touching: $other")
-            this
-        } else {
-            val reachable = neighbours.intersect(theirNeighbours)
-            val reachableByDistance = reachable
-                .map { PointDistance(it, distanceTo(it)) }
-                .filter { other.distanceTo(it.point) == 1 }
-                .sortedBy(PointDistance::distance)
-
-            val movingTo = reachableByDistance.first()
-            // println("Moving to: ${movingTo.point} d=${movingTo.distance}")
-            movingTo.point
+        fun moveRemainingKnots() {
+            (1 until knots.size)
+                .forEach {
+                    knots[it] = knots[it].moveAdjacentTo(knots[it - 1])
+                }
         }
+
+        val tail: Point
+            get() = knots.last()
     }
-
-    private fun Point.distanceTo(it: Point) = abs(it.x - x) + abs(it.y - y)
-
-    private fun Point.neighbours() =
-        (-1..1)
-            .flatMap { deltaX ->
-                (-1..1)
-                    .map { deltaY -> Point(x + deltaX, y + deltaY) }
-            }
-            .toSet()
 
     fun test1(file: String): Int {
         val moves = readLines(file)
             .map { it.toMove() }
 
-        var head = Point(0, 0)
-        var tail = Point(0, 0)
+        val rope = Rope(2)
         val tailPositions = mutableSetOf<Point>()
 
         moves.forEach { move ->
-            // println(move)
+            //println(move)
             repeat(move.steps) {
-                head = head.moveInDirection(move.direction)
-                tail = tail.moveAdjacentTo(head)
-                tailPositions.add(tail)
+                rope.moveHead(move)
+                rope.moveRemainingKnots()
+                tailPositions.add(rope.tail)
             }
-            // println()
+            //println()
         }
         return tailPositions.size
     }

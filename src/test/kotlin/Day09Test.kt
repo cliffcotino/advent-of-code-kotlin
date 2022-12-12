@@ -1,9 +1,7 @@
 
-import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Disabled
 class Day09Test {
 
     private val day = Day09()
@@ -15,9 +13,9 @@ class Day09Test {
     }
 
     @Test
-    fun `test2 sample`() {
-        val actual = day.test2("sample")
-        assertEquals(-1, actual)
+    fun `test2 sample larger`() {
+        val actual = day.test2("sample-larger")
+        assertEquals(36, actual)
     }
 
     @Test
