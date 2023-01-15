@@ -52,14 +52,14 @@ class Day10 : Day() {
         val measure: () -> Unit = {
             val currentCycle = clock.get()
             if (currentCycle in cycles && !calculatedAt.contains(currentCycle)) {
-                println("calculating signal strength at cycle=$currentCycle - register=${register.get()}")
+                // println("calculating signal strength at cycle=$currentCycle - register=${register.get()}")
                 sum.addAndGet(getSignalStrength(clock, register))
                 calculatedAt.add(currentCycle)
             }
         }
 
         operations.forEach { operation ->
-            println("cycle=$clock x=$register - operation $operation")
+            // println("cycle=$clock x=$register - operation $operation")
             when (operation) {
                 is Operation.Add -> operation.execute(clock, register, measure)
                 Operation.Noop -> operation.execute(clock, register, measure)
@@ -71,8 +71,43 @@ class Day10 : Day() {
 
     private fun getSignalStrength(currentCycle: AtomicInteger, register: AtomicInteger) = currentCycle.get() * register.get()
 
-    fun test2(file: String): Int =
-        readLines(file)
-            .count()
+    fun test2(file: String): Int {
+        val operations = readLines(file)
+            .map { it.toOperation() }
+
+        val register = AtomicInteger(1)
+        val clock = AtomicInteger(1)
+        val drawSymbol = Array(240) { '.' }
+        val calculatedAt = mutableSetOf<Int>()
+
+        val draw: () -> Unit = {
+            val currentCycle = clock.get()
+            if (!calculatedAt.contains(currentCycle)) {
+                // println("calculating pixel at cycle=$currentCycle - register=${register.get()}")
+                val spritePosition = register.get() + 1
+                val currentIndex = clock.get() % 40
+                if (currentIndex in (spritePosition - 1..spritePosition + 1)) {
+                    drawSymbol[clock.get() - 1] = '#'
+                }
+                calculatedAt.add(currentCycle)
+            }
+        }
+
+        operations.forEach { operation ->
+            // println("cycle=$clock x=$register - operation $operation")
+            when (operation) {
+                is Operation.Add -> operation.execute(clock, register, draw)
+                Operation.Noop -> operation.execute(clock, register, draw)
+            }
+        }
+
+        drawSymbol.forEachIndexed { i, char ->
+            print(char)
+            if ((i + 1) % 40 == 0) {
+                println()
+            }
+        }
+        return 0
+    }
 
 }
