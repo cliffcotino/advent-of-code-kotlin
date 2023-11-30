@@ -1,3 +1,4 @@
+import java.lang.IllegalArgumentException
 import java.math.BigInteger
 import java.security.MessageDigest
 import kotlin.io.path.Path
@@ -14,6 +15,15 @@ fun readInput(name: String) = Path("src/$name.txt").readLines()
 fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteArray()))
     .toString(16)
     .padStart(32, '0')
+
+/**
+ * Assert that actual == expected
+ */
+fun <T> assertEquals(actual: T, expected: T) {
+    if (actual != expected) {
+        throw AssertionError("actual != expected => '$actual' != '$expected'")
+    }
+}
 
 /**
  * The cleaner shorthand for printing output.
