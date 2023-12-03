@@ -1,6 +1,3 @@
-private enum class Numbers {
-    One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten
-}
 
 fun main() {
 
@@ -46,4 +43,8 @@ fun main() {
     val input = readInput("Day01")
     part1(input).println()
     part2(input).println()
+}
+
+private enum class Numbers {
+    One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten
 }

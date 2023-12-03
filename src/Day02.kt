@@ -2,39 +2,6 @@ import kotlin.math.max
 
 fun main() {
 
-    data class Game(val id: Int, val sets: List<Map<String, Int>>)
-
-    fun Map<String, Int>.isPossible(givenSet: Map<String, Int>): Boolean {
-        return all { entry -> givenSet[entry.key]!! >= entry.value }
-    }
-
-    fun List<Map<String, Int>>.minimumSet(): Map<String, Int> {
-        return fold(mapOf()) { acc, map ->
-            (acc.keys + map.keys).associateWith { key ->
-                max(acc[key] ?: Int.MIN_VALUE, map[key] ?: Int.MIN_VALUE)
-            }
-        }
-    }
-
-    fun Map<String, Int>.power(): Int {
-        return values.fold(1) { acc: Int, v: Int -> acc * v }
-    }
-
-    fun String.toSets(): List<Map<String, Int>> {
-        val sets = split(";")
-        return sets.map { set ->
-            val cubes = set.split(", ").map { it.trim() }
-            cubes.associate {
-                it.substringAfter(" ") to it.substringBefore(" ").toInt()
-            }
-        }
-    }
-
-    fun String.toGame() = Game(
-        id = substringBetween("Game ", ":").toInt(),
-        sets = substringAfter(":").toSets()
-    )
-
     fun part1(input: List<String>, givenSet: Map<String, Int>): Int {
         return input.map { s -> s.toGame() }
             .filter { game -> game.sets.all { set -> set.isPossible(givenSet) } }
@@ -58,3 +25,37 @@ fun main() {
     part1(input, givenSet).println() // 2283
     part2(input).println() // 78669
 }
+
+private data class Game(val id: Int, val sets: List<Map<String, Int>>)
+
+private fun Map<String, Int>.isPossible(givenSet: Map<String, Int>): Boolean {
+    return all { entry -> givenSet[entry.key]!! >= entry.value }
+}
+
+private fun List<Map<String, Int>>.minimumSet(): Map<String, Int> {
+    return fold(mapOf()) { acc, map ->
+        (acc.keys + map.keys).associateWith { key ->
+            max(acc[key] ?: Int.MIN_VALUE, map[key] ?: Int.MIN_VALUE)
+        }
+    }
+}
+
+private fun Map<String, Int>.power(): Int {
+    return values.fold(1) { acc: Int, v: Int -> acc * v }
+}
+
+private fun String.toSets(): List<Map<String, Int>> {
+    val sets = split(";")
+    return sets.map { set ->
+        val cubes = set.split(", ").map { it.trim() }
+        cubes.associate {
+            it.substringAfter(" ") to it.substringBefore(" ").toInt()
+        }
+    }
+}
+
+private fun String.toGame() = Game(
+    id = substringBetween("Game ", ":").toInt(),
+    sets = substringAfter(":").toSets()
+)
+
