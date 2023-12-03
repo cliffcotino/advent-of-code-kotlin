@@ -1,18 +1,18 @@
 fun main() {
 
     fun part1(input: List<String>): Int {
-        val symbols: List<Symbol> = input.toSymbols()
-        val numbers: List<Number> = input.toNumbers()
-        return numbers.filter { number -> number.isAdjacentToAnySymbol(symbols) }
+        val parts = input.toParts()
+        val symbols = input.toSymbols()
+        return parts.filter { number -> number.isAdjacentToAnySymbol(symbols) }
             .sumOf { number -> number.asInt }
     }
 
     fun part2(input: List<String>): Int {
-        val numbers: List<Number> = input.toNumbers()
-        val gears: List<Gear> = input.toSymbols()
+        val parts = input.toParts()
+        val gears = input.toSymbols()
             .filter { s -> s.value == '*' }
             .mapNotNull { s ->
-                val adjacentParts: List<Number> = s.findAdjacentNumbers(numbers)
+                val adjacentParts = s.findAdjacentParts(parts)
                 if (adjacentParts.size == 2) {
                     Gear(adjacentParts[0].asInt, adjacentParts[1].asInt)
                 } else {
@@ -33,8 +33,8 @@ fun main() {
     part2(input).println() // 74528807
 }
 
-private fun Symbol.findAdjacentNumbers(numbers: List<Number>): List<Number> {
-    return numbers.filter { number -> number.neighbours().any { symbol -> symbol == position } }
+private fun Symbol.findAdjacentParts(parts: List<Part>): List<Part> {
+    return parts.filter { part -> part.neighbours.any { symbol -> symbol == position } }
 }
 
 private fun List<String>.toSymbols(): List<Symbol> {
@@ -51,38 +51,41 @@ private fun List<String>.toSymbols(): List<Symbol> {
     }.toList()
 }
 
-private fun List<String>.toNumbers(): List<Number> {
+private fun List<String>.toParts(): List<Part> {
     return flatMapIndexed { y, s ->
-        s.mapToNumbers(y)
+        s.mapToParts(y)
     }.toList()
 }
 
-private fun String.mapToNumbers(y: Int): List<Number> {
+private fun String.mapToParts(y: Int): List<Part> {
+    val parts = mutableListOf<Part>()
+
     var i = 0
-    val numbers = mutableListOf<Number>()
     while (i < length) {
         if (get(i).isDigit()) {
             val digits = substring(i).takeWhile { c -> c.isDigit() }
-            numbers.add(Number(value = digits, Position(i, y)))
+            parts.add(Part(value = digits, Position(i, y)))
             i += digits.length
         } else {
             i++
         }
     }
-    return numbers
+    return parts
 }
 
-private fun Number.isAdjacentToAnySymbol(symbols: List<Symbol>): Boolean {
-    val neighbours = neighbours()
+private fun Part.isAdjacentToAnySymbol(symbols: List<Symbol>): Boolean {
+    val neighbours = neighbours
     return neighbours.any { neighbour -> symbols.any { symbol -> symbol.position == neighbour }  }
 }
 
 private data class Position(val x: Int, val y: Int) {
-    fun neighbours(): List<Position> = listOf(
-        Position(x - 1, y - 1), Position(x, y - 1), Position(x + 1, y - 1),
-        Position(x - 1, y), /*this*/ Position(x + 1, y),
-        Position(x - 1, y + 1), Position(x, y + 1), Position(x + 1, y + 1),
-    )
+    val neighbours: List<Position> by lazy {
+        listOf(
+            Position(x - 1, y - 1), Position(x, y - 1), Position(x + 1, y - 1),
+            Position(x - 1, y), /*this*/ Position(x + 1, y),
+            Position(x - 1, y + 1), Position(x, y + 1), Position(x + 1, y + 1),
+        )
+    }
 }
 
 private data class Symbol(val value: Char, val position: Position)
@@ -92,15 +95,15 @@ private data class Gear(val part1: Int, val part2: Int) {
         get() = part1 * part2
 }
 
-private data class Number(val value: String, val position: Position) {
+private data class Part(val value: String, val position: Position) {
     val asInt: Int
         get() = value.toInt()
 
-    fun ownPositions(): Set<Position> {
-        return value.indices.map { i -> Position(x = position.x + i, y = position.y) }.toSet()
+    val ownPositions: Set<Position> by lazy {
+        value.indices.map { i -> Position(x = position.x + i, y = position.y) }.toSet()
     }
 
-    fun neighbours(): Set<Position> {
-        return ownPositions().flatMap { it.neighbours() }.toSet()
+    val neighbours: Set<Position> by lazy {
+        ownPositions.flatMap { it.neighbours }.toSet()
     }
 }
