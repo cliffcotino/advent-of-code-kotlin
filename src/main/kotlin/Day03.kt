@@ -3,8 +3,8 @@ fun main() {
     fun part1(input: List<String>): Int {
         val parts = input.toParts()
         val symbols = input.toSymbols()
-        return parts.filter { number -> number.isAdjacentToAnySymbol(symbols) }
-            .sumOf { number -> number.asInt }
+        return parts.filter { part -> part.isAdjacentToAnySymbol(symbols) }
+            .sumOf { part -> part.valueAsInt }
     }
 
     fun part2(input: List<String>): Int {
@@ -14,7 +14,7 @@ fun main() {
             .mapNotNull { s ->
                 val adjacentParts = s.findAdjacentParts(parts)
                 if (adjacentParts.size == 2) {
-                    Gear(adjacentParts[0].asInt, adjacentParts[1].asInt)
+                    Gear(adjacentParts[0].valueAsInt, adjacentParts[1].valueAsInt)
                 } else {
                     null
                 }
@@ -68,7 +68,6 @@ private fun String.mapToParts(y: Int): List<Part> {
 }
 
 private fun Part.isAdjacentToAnySymbol(symbols: List<Symbol>): Boolean {
-    val neighbours = neighbours
     return neighbours.any { neighbour -> symbols.any { symbol -> symbol.position == neighbour }  }
 }
 
@@ -76,7 +75,7 @@ private data class Position(val x: Int, val y: Int) {
     val neighbours: List<Position> by lazy {
         listOf(
             Position(x - 1, y - 1), Position(x, y - 1), Position(x + 1, y - 1),
-            Position(x - 1, y), /*this*/ Position(x + 1, y),
+            Position(x - 1, y), /*Position(x, y)*/ Position(x + 1, y),
             Position(x - 1, y + 1), Position(x, y + 1), Position(x + 1, y + 1),
         )
     }
@@ -90,7 +89,7 @@ private data class Gear(val part1: Int, val part2: Int) {
 }
 
 private data class Part(val value: String, val position: Position) {
-    val asInt: Int
+    val valueAsInt: Int
         get() = value.toInt()
 
     val ownPositions: Set<Position> by lazy {
