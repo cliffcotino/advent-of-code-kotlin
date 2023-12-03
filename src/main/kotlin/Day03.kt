@@ -58,19 +58,13 @@ private fun List<String>.toParts(): List<Part> {
 }
 
 private fun String.mapToParts(y: Int): List<Part> {
-    val parts = mutableListOf<Part>()
-
-    var i = 0
-    while (i < length) {
-        if (get(i).isDigit()) {
-            val digits = substring(i).takeWhile { c -> c.isDigit() }
-            parts.add(Part(value = digits, Position(i, y)))
-            i += digits.length
-        } else {
-            i++
+    val regex = Regex("\\d+")
+    val matchResults = regex.findAll(this)
+    return matchResults.flatMap { matchResult ->
+        matchResult.groups.map { group ->
+            Part(value = group!!.value, Position(x = group.range.first, y = y))
         }
-    }
-    return parts
+    }.toList()
 }
 
 private fun Part.isAdjacentToAnySymbol(symbols: List<Symbol>): Boolean {
