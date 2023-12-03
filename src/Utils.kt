@@ -17,6 +17,11 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
     .padStart(32, '0')
 
 /**
+ * Get the string between start and end
+ */
+fun String.substringBetween(start: String, end: String): String = substringAfter(start).substringBefore(end)
+
+/**
  * Assert that actual == expected
  */
 fun <T> assertEquals(actual: T, expected: T) {
