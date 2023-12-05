@@ -1,38 +1,64 @@
+import java.util.LinkedList
 
 fun main() {
 
-    fun part1(input: List<String>): Int {
-        val seeds = Seeds(input[0].substringAfter(" ").split(" ").map { it.toInt() })
-        val mapping = parseMappings(input.drop(2))
-        return mapping.size
+    fun moveSeeds(seeds: List<Long>, mappings: List<Mapping>): Long {
+        var mappedSeeds = seeds
+        for (mapping in mappings) {
+            mappedSeeds = mapping.applyTo(mappedSeeds)
+        }
+        return mappedSeeds.min()
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
+    fun part1(input: List<String>): Long {
+        val seeds = input[0].substringAfter(" ").split(" ").map { it.toLong() }
+        val mappings = input.drop(2).toMappings()
+        return moveSeeds(seeds, mappings)
+    }
+
+    fun part2(input: List<String>): Long {
+        val mappings = input.drop(2).toMappings()
+
+        val seedRanges = input[0].substringAfter(" ").split(" ").map { it.toLong() }
+            .chunked(2)
+
+        val minima = mutableListOf<Long>()
+        seedRanges.forEach { range ->
+            val seedList = LinkedList<Long>()
+            (0 until range[1]).forEach {
+                seedList.add(range[0] + it)
+            }
+            val minOfSeedRange = moveSeeds(seedList, mappings)
+            println("minOfSeedRange: $minOfSeedRange")
+            minima.add(minOfSeedRange)
+            seedList.clear()
+        }
+        return minima.min()
     }
 
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day05_test")
     assertEquals(part1(testInput), 35)
+    assertEquals(part2(testInput), 46)
 
     val input = readInput("Day05")
-    part1(input).println()
+    part1(input).println() // 993500720
     part2(input).println()
 }
 
-private fun parseMappings(mappingContent: List<String>): List<Mapping> {
+private fun List<String>.toMappings(): List<Mapping> {
     val maps = mutableListOf<Mapping>()
     var i = 0
-    while (i < mappingContent.size) {
-        val name = mappingContent[i++]
+    while (i < size) {
+        val name = this[i++]
         val mappingRanges = mutableListOf<Mapping.MappingRange>()
-        while (i < mappingContent.size && mappingContent[i].matches(Regex("\\d.*"))) {
-            val line = mappingContent[i].trim().split(" ")
+        while (i < size && this[i].matches(Regex("\\d.*"))) {
+            val split = this[i].trim().split(" ")
             mappingRanges.add(
                 Mapping.MappingRange(
-                    destinationRangeStart = line[0].toInt(),
-                    sourceRangeStart = line[1].toInt(),
-                    rangeLength = line[2].toInt()
+                    destinationRangeStart = split[0].toLong(),
+                    sourceRangeStart = split[1].toLong(),
+                    rangeLength = split[2].toLong()
                 )
             )
             i++
@@ -49,17 +75,32 @@ private fun parseMappings(mappingContent: List<String>): List<Mapping> {
     return maps
 }
 
-private data class Seeds(val seeds: List<Int>)
-
 private data class Mapping(
     val sourceCategory: String,
     val destinationCategory: String,
     val ranges: List<MappingRange>
 ) {
+    fun applyTo(seeds: List<Long>): List<Long> {
+        return (seeds).map { i ->
+            val moved = applyMappings(i)
+            moved ?: i
+        }
+    }
+
+    private fun applyMappings(i: Long): Long? {
+        for (r in ranges) {
+            if (i >= r.sourceRangeStart && i < r.sourceRangeStart + r.rangeLength) {
+                val distanceFromStart = i - r.sourceRangeStart
+                return (r.destinationRangeStart + distanceFromStart)
+            }
+        }
+        return null
+    }
+
     data class MappingRange(
-        val destinationRangeStart: Int,
-        val sourceRangeStart: Int,
-        val rangeLength: Int
+        val destinationRangeStart: Long,
+        val sourceRangeStart: Long,
+        val rangeLength: Long
     )
 }
 
