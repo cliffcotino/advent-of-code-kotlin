@@ -33,3 +33,12 @@ fun <T> assertEquals(actual: T, expected: T) {
  * The cleaner shorthand for printing output.
  */
 fun Any?.println() = println(this)
+
+/**
+ * Measure how long the given block calculation takes to execute
+ */
+fun measure(block: () -> Unit) {
+    val start = System.currentTimeMillis()
+    block()
+    println("Execution duration: ${System.currentTimeMillis() - start} ms" )
+}
