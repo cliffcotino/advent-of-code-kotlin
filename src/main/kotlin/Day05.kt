@@ -1,17 +1,15 @@
-import java.util.LinkedList
-
 fun main() {
 
     fun part1(input: List<String>): Long {
         val mappings = input.drop(2).toMappings()
-        val seedRanges = input[0].toLongs()
+        val seedRanges = input[0].substringAfter(" ").splitToLongs()
             .map { long -> SeedRange(long, 1) }
         return getLowestLocation(seedRanges, mappings)
     }
 
     fun part2(input: List<String>): Long {
         val mappings = input.drop(2).toMappings()
-        val seedRanges = input[0].toLongs()
+        val seedRanges = input[0].substringAfter(" ").splitToLongs()
             .chunked(2)
             .map { pair -> SeedRange(pair[0], pair[1]) }
         return getLowestLocation(seedRanges, mappings)
@@ -27,35 +25,6 @@ fun main() {
     // part2(input).println() // ?
 }
 
-private fun moveSeeds(seeds: List<Long>, mappings: List<Mapping>): Long {
-    var mappedSeeds = seeds
-    for (mapping in mappings) {
-        mappedSeeds = mapping.applyTo(mappedSeeds)
-    }
-    return mappedSeeds.min()
-}
-
-private fun String.toLongs(): List<Long> {
-    return substringAfter(" ").split(" ").map { it.toLong() }
-}
-
-private fun getLowestLocation(seedRanges: List<SeedRange>, mappings: List<Mapping>): Long {
-    val minima = mutableListOf<Long>()
-    seedRanges.forEach { range ->
-        val seedList = LinkedList<Long>()
-        (0 until range.length).forEach {
-            seedList.add(range.start + it)
-        }
-        val minOfSeedRange = moveSeeds(seedList, mappings)
-        println("minOfSeedRange: $minOfSeedRange")
-        minima.add(minOfSeedRange)
-        seedList.clear()
-    }
-    val minimum = minima.min()
-    println("min: $minimum")
-    return minimum
-}
-
 private fun List<String>.toMappings(): List<Mapping> {
     val maps = mutableListOf<Mapping>()
     var i = 0
@@ -63,12 +32,12 @@ private fun List<String>.toMappings(): List<Mapping> {
         val name = this[i++]
         val mappingRanges = mutableListOf<Mapping.MappingRange>()
         while (i < size && this[i].matches(Regex("\\d.*"))) {
-            val split = this[i].trim().split(" ")
+            val split = this[i].splitToLongs()
             mappingRanges.add(
                 Mapping.MappingRange(
-                    destinationRangeStart = split[0].toLong(),
-                    sourceRangeStart = split[1].toLong(),
-                    rangeLength = split[2].toLong()
+                    destinationRangeStart = split[0],
+                    sourceRangeStart = split[1],
+                    rangeLength = split[2]
                 )
             )
             i++
@@ -84,10 +53,32 @@ private fun List<String>.toMappings(): List<Mapping> {
     }
     return maps
 }
- private data class SeedRange(val start: Long, val length: Long) {
-     val rangeEnd: Long
-         get() = start + length
- }
+
+private fun getLowestLocation(seedRanges: List<SeedRange>, mappings: List<Mapping>): Long {
+    val minima = mutableListOf<Long>()
+    seedRanges.forEach { seedRange ->
+        val movedSeedRanges = seedRange.moveAccordingTo(mappings)
+        val minOfSeedRanges = movedSeedRanges.minOf { seedRange.start }
+        println("minOfSeedRange: $minOfSeedRanges")
+        minima.add(minOfSeedRanges)
+    }
+    val minimum = minima.min()
+    println("min: $minimum")
+    return minimum
+}
+
+private fun SeedRange.moveAccordingTo(mappings: List<Mapping>): List<SeedRange> {
+    var mappedSeeds = listOf(this)
+    for (mapping in mappings) {
+        // mappedSeeds = mapping.applyTo(mappedSeeds)
+    }
+    return mappedSeeds
+}
+
+private data class SeedRange(val start: Long, val length: Long) {
+    val end: Long
+        get() = start + length
+}
 
 private data class Mapping(
     val sourceCategory: String,
@@ -101,10 +92,10 @@ private data class Mapping(
         }
     }
 
-    private fun applyMappings(i: Long): Long? {
+    private fun applyMappings(value: Long): Long? {
         for (r in ranges) {
-            if (i >= r.sourceRangeStart && i < r.sourceRangeStart + r.rangeLength) {
-                val distanceFromStart = i - r.sourceRangeStart
+            if (value >= r.sourceRangeStart && value < r.sourceRangeStart + r.rangeLength) {
+                val distanceFromStart = value - r.sourceRangeStart
                 return (r.destinationRangeStart + distanceFromStart)
             }
         }

@@ -2,15 +2,11 @@ import kotlin.math.pow
 
 fun main() {
 
-    fun String.toListOfInt(): List<Int> {
-        return trim().split(Regex("\\s+")).map { it.toInt() }
-    }
-
     fun String.toCardGame(): CardGame {
         return CardGame(
             id = substringBetween("Card ", ":").trim().toInt(),
-            winningNumbers = substringAfter(":").substringBefore("|").toListOfInt(),
-            ownNumbers = substringAfter("|").toListOfInt()
+            winningNumbers = substringAfter(":").substringBefore("|").splitToInts(),
+            ownNumbers = substringAfter("|").splitToInts()
         )
     }
 
@@ -41,8 +37,8 @@ fun main() {
     assertEquals(part2(testInput), 30)
 
     val input = readInput("Day04")
-    part1(input).println()
-    part2(input).println()
+    part1(input).println() // 23847
+    part2(input).println() // 8570000
 }
 
 private data class CardGame(val id: Int, val winningNumbers: List<Int>, val ownNumbers: List<Int>) {

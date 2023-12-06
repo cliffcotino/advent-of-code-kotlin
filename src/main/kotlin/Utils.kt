@@ -20,6 +20,14 @@ fun String.md5() = BigInteger(1, MessageDigest.getInstance("MD5").digest(toByteA
  */
 fun String.substringBetween(start: String, end: String): String = substringAfter(start).substringBefore(end)
 
+fun String.splitToLongs(): List<Long> {
+    return trim().split(Regex("\\s+")).map { it.toLong() }
+}
+
+fun String.splitToInts(): List<Int> {
+    return trim().split(Regex("\\s+")).map { it.toInt() }
+}
+
 /**
  * Assert that actual == expected
  */

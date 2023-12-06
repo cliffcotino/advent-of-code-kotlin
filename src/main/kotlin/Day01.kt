@@ -41,8 +41,8 @@ fun main() {
     assertEquals(part2(testInput2), 281)
 
     val input = readInput("Day01")
-    part1(input).println()
-    part2(input).println()
+    part1(input).println() // 56108
+    part2(input).println() // 55652
 }
 
 private enum class Numbers {
