@@ -63,6 +63,18 @@ fun <T> List<T>.permutations(length: Int, acc: List<T> = listOf()): List<List<T>
     }
 }
 
+tailrec fun gcd(x: Long, y: Long): Long {
+    return if (y == 0L) x else gcd(y, x % y)
+}
+
+fun gcd(vararg numbers: Long): Long {
+    return numbers.fold(0L) { acc: Long, l: Long -> gcd(acc, l) }
+}
+
+fun lcm(vararg numbers: Long): Long {
+    return numbers.fold(1L) { acc: Long, l: Long -> acc * (l / gcd(acc, l)) }
+}
+
 /** The cleaner shorthand for printing output. */
 fun Any?.println() = println(this)
 
