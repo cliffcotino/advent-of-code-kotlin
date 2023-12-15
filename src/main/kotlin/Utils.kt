@@ -84,3 +84,20 @@ fun measure(block: () -> Unit) {
     block()
     println("Execution duration: ${System.currentTimeMillis() - start} ms")
 }
+
+fun List<String>.groupConsecutiveBy(predicate: (String) -> Boolean): List<List<String>> {
+    val groups = mutableListOf<List<String>>()
+    var lastGroup = mutableListOf<String>()
+    forEach { line ->
+        if (predicate.invoke(line)) {
+            lastGroup.add(line)
+        } else {
+            groups.add(lastGroup)
+            lastGroup = mutableListOf()
+        }
+    }
+    if (lastGroup.isNotEmpty()) {
+        groups.add(lastGroup)
+    }
+    return groups
+}

@@ -1,17 +1,34 @@
 
 fun main() {
 
+    val mapOfNumbers = mapOf(
+        "1" to 1,
+        "2" to 2,
+        "3" to 3,
+        "4" to 4,
+        "5" to 5,
+        "6" to 6,
+        "7" to 7,
+        "8" to 8,
+        "9" to 9,
+        "one" to 1,
+        "two" to 2,
+        "three" to 3,
+        "four" to 4,
+        "five" to 5,
+        "six" to 6,
+        "seven" to 7,
+        "eight" to 8,
+        "nine" to 9
+    )
+
     fun String.findDigits(progression: IntProgression): Int {
-        val chars = toCharArray()
         progression.forEach { i ->
-            if (chars[i].isDigit()) {
-                return chars[i].digitToInt()
-            }
-            val match = Numbers.entries
-                .firstOrNull { number -> substring(i).startsWith(number.name, ignoreCase = true) }
+            val match = mapOfNumbers.entries
+                .firstOrNull { pair -> substring(i).startsWith(pair.key) }
 
             if (match != null) {
-                return match.ordinal + 1
+                return match.value
             }
         }
         throw IllegalArgumentException()
@@ -43,8 +60,4 @@ fun main() {
     val input = readInput("Day01")
     part1(input).println() // 56108
     part2(input).println() // 55652
-}
-
-private enum class Numbers {
-    One, Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten
 }
