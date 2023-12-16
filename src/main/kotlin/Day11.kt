@@ -4,14 +4,14 @@ import kotlin.math.min
 
 fun main() {
 
-    fun part1(input: List<String>): Int {
+    fun part1(input: List<String>): Long {
         val emptyRows = input.findEmptyRows()
         val emptyColumns = input.findEmptyColumns()
         val galaxyPositions = input.findGalaxyPositions()
         return distanceBetweenGalaxies(galaxyPositions, 2, emptyRows, emptyColumns)
     }
 
-    fun part2(input: List<String>, scaleFactor: Int): Int {
+    fun part2(input: List<String>, scaleFactor: Int): Long {
         val emptyRows = input.findEmptyRows()
         val emptyColumns = input.findEmptyColumns()
         val galaxyPositions = input.findGalaxyPositions()
@@ -57,16 +57,16 @@ private fun distanceBetweenGalaxies(
     scaleFactor: Int,
     emptyRows: List<Int>,
     emptyColumns: List<Int>
-): Int {
+): Long {
     val pairs = findUniquePairs(galaxyPositions)
     return pairs.sumOf { pair ->
         val g1 = pair.first
         val g2 = pair.second
         val intersectionsX = emptyColumns.intersections(g1.x, g2.x)
-        val distanceX = abs(g1.x - g2.x) + (intersectionsX * (scaleFactor - 1))
+        val distanceX = abs(g1.x - g2.x).toLong() + (intersectionsX * (scaleFactor - 1))
 
         val intersectionsY = emptyRows.intersections(g1.y, g2.y)
-        val distanceY = abs(g1.y - g2.y) + (intersectionsY * (scaleFactor - 1))
+        val distanceY = abs(g1.y - g2.y).toLong() + (intersectionsY * (scaleFactor - 1))
 
         distanceX + distanceY
     }
