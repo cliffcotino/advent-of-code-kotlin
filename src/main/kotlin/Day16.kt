@@ -1,4 +1,10 @@
-import kotlin.math.max
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CountDownLatch
+import kotlin.coroutines.CoroutineContext
 
 fun main() {
 
@@ -43,29 +49,39 @@ fun main() {
         val grid = input.map { line -> line.toList() }
         val columns = grid[0].size
 
-        var maximum = 0
-        // from left of the grid
-        repeat(grid.size) {
-            val startingLaser = LaserRight(position = GridPosition(x = 0, y = it))
-            maximum = max(maximum, solveForGrid(grid, startingLaser))
-        }
-        // from right of the grid
-        repeat(grid.size) {
-            val startingLaser = LaserLeft(position = GridPosition(x = columns - 1, y = it))
-            maximum = max(maximum, solveForGrid(grid, startingLaser))
-        }
-        // from top of the grid
-        repeat(columns) {
-            val startingLaser = LaserDown(position = GridPosition(x = it, y = 0))
-            maximum = max(maximum, solveForGrid(grid, startingLaser))
-        }
-        // from bottom of the grid
-        repeat(columns) {
-            val startingLaser = LaserUp(position = GridPosition(x = it, y = grid.size - 1))
-            maximum = max(maximum, solveForGrid(grid, startingLaser))
-        }
+        val solutions = ConcurrentHashMap<Laser, Int>()
 
-        return maximum
+        runBlocking(Dispatchers.Default) {
+            launch {
+                // from left of the grid
+                repeat(grid.size) {
+                    val startingLaser = LaserRight(position = GridPosition(x = 0, y = it))
+                    solutions[startingLaser] = solveForGrid(grid, startingLaser)
+                }
+            }
+            launch {
+                // from right of the grid
+                repeat(grid.size) {
+                    val startingLaser = LaserLeft(position = GridPosition(x = columns - 1, y = it))
+                    solutions[startingLaser] = solveForGrid(grid, startingLaser)
+                }
+            }
+            launch {
+                // from top of the grid
+                repeat(columns) {
+                    val startingLaser = LaserDown(position = GridPosition(x = it, y = 0))
+                    solutions[startingLaser] = solveForGrid(grid, startingLaser)
+                }
+            }
+            launch {
+                // from bottom of the grid
+                repeat(columns) {
+                    val startingLaser = LaserUp(position = GridPosition(x = it, y = grid.size - 1))
+                    solutions[startingLaser] = solveForGrid(grid, startingLaser)
+                }
+            }
+        }
+        return solutions.maxOf { e -> e.value }
     }
 
     // test if implementation meets criteria from the description, like:
@@ -74,8 +90,12 @@ fun main() {
     assertEquals(part2(testInput), 51)
 
     val input = readInput("Day16")
-    part1(input).println() // 7415
-    part2(input).println() // 7943
+    measure {
+        part1(input).println() // 7415
+    }
+    measure {
+        part2(input).println() // 7943
+    }
 }
 
 private fun Laser.isSeenAtLocation(seenLasers: List<List<java.util.HashSet<Char>>>): Boolean {
