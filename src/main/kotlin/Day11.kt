@@ -18,17 +18,6 @@ fun main() {
         return distanceBetweenGalaxies(galaxyPositions, scaleFactor, emptyRows, emptyColumns)
     }
 
-    part2("""
-        ..#..
-        .....
-        ..#..
-    """.trimIndent().lines(), 1000_000).println()
-
-    part2("""
-        .#.#.
-        .....
-    """.trimIndent().lines(), 2).println()
-
     // test if implementation meets criteria from the description, like:
     val testInput = readInput("Day11_test")
     assertEquals(part1(testInput), 374)
@@ -37,8 +26,7 @@ fun main() {
 
     val input = readInput("Day11")
     part1(input).println() // 9957702
-    part2(input, 1_000_000).println() // ?
-    // wrong: 1139825014, 1140337246
+    part2(input, 1_000_000).println() // 512240933238
 }
 
 private data class GalaxyPosition(val x: Int, val y: Int, val char: Char)
