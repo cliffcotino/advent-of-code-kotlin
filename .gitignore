@@ -1,5 +1,5 @@
 .gradle
 .idea
 build
-src/**/*.txt
-!src/**/*test*.txt
+**/src/**/*.txt
+!**/src/**/*test*.txt
