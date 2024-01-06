@@ -1,11 +1,11 @@
-plugins {
-    kotlin("jvm") version "1.9.20"
-}
+val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
-repositories {
-    mavenCentral()
+plugins {
+    id("aoc.kotlin-conventions")
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+    implementation(libs.findLibrary("kotlin-logging").get())
+    implementation(libs.findLibrary("kotlin-coroutines").get())
+    implementation(project(":common"))
 }

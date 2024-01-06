@@ -1,5 +1,5 @@
 
-import org.apache.logging.log4j.LogManager
+import mu.KotlinLogging
 import java.util.concurrent.atomic.LongAdder
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 class Day11Test : DayTemplate() {
 
     companion object {
-        val logger = LogManager.getLogger(this::class.java.declaringClass)!!
+        val logger = KotlinLogging.logger {}
     }
 
     class Monkeys(private val monkeys: List<Monkey>) {
