@@ -1,29 +1,29 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
-val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+val libs = versionCatalogs.named("libs")
 
 plugins {
     kotlin("jvm")
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
-    gradlePluginPortal()
 }
 
 kotlin {
+    val jdkVersion = libs.findVersion("jdk").get().toString()
+    val kotlinVersion = libs.findVersion("kotlin").get().toString()
+        .substringBeforeLast(".").replace(".", "_")
+
     jvmToolchain {
         languageVersion.set(
-            JavaLanguageVersion.of(libs.findVersion("jdk").get().toString())
+            JavaLanguageVersion.of(jdkVersion)
         )
     }
     compilerOptions {
-        val kotlinVersion = libs.findVersion("kotlin").get().toString()
-            .substringBeforeLast(".").replace(".", "_")
         freeCompilerArgs = listOf("-Xjsr305=strict")
-        jvmTarget.set(JvmTarget.valueOf("JVM_${libs.findVersion("jdk").get()}"))
+        jvmTarget.set(JvmTarget.valueOf("JVM_${jdkVersion}"))
         languageVersion.set(
             KotlinVersion.valueOf("KOTLIN_${kotlinVersion}")
         )

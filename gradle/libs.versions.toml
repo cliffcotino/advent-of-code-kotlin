@@ -1,9 +1,9 @@
 [versions]
-kotlin-logging = "3.0.5"
 jdk = "21"
 kotlin = "1.9.22"
-kotlin-coroutines = "1.7.3"
 antlr = "4.13.0"
+kotlin-coroutines = "1.7.3"
+kotlin-logging = "3.0.5"
 
 [libraries]
 # buildSrc dependencies
@@ -11,9 +11,9 @@ antlr-runtime = { module = "org.antlr:antlr4-runtime", version.ref = "antlr" }
 kotlin-gradle = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 # project dependencies
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
 kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
 kotlin-logging = { module = "io.github.microutils:kotlin-logging", version.ref = "kotlin-logging" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test-junit5", version.ref = "kotlin" }
 
 [bundles]
 # kotlin-coroutines = ["kotlin-coroutines"]

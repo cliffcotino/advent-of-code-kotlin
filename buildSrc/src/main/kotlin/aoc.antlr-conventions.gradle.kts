@@ -1,8 +1,4 @@
-import org.gradle.api.artifacts.VersionCatalogsExtension
-import org.gradle.kotlin.dsl.antlr
-import org.gradle.kotlin.dsl.getByType
-
-val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
+val libs = versionCatalogs.named("libs")
 
 plugins {
     antlr
