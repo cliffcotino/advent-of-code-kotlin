@@ -2,7 +2,7 @@
 jdk = "21"
 kotlin = "2.0.20"
 antlr = "4.13.2"
-kotlin-coroutines = "1.8.1"
+kotlin-coroutines = "1.9.0"
 kotlin-logging = "3.0.5"
 
 [libraries]
